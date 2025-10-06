@@ -2,50 +2,77 @@
 #include "AsSis.h"
 
 const int defaultRes = 1000; // Default render resolution
-const double targetScale = 900; // Target scale for rendered content
+const double defaultScale = 100;
+const double targetScale = 900; // Target scale for rendered content if autoScale = tue
+const bool autoScale = true;
 
 const bool squarify = false; // Squarify???
-const int m = 0; // Start rendering from
-const int n = 1000; // Stop rendering at
-const double r = 334.34; // Changing this doesn't seem to change anything???
+const bool circlify = true; // Circlify???
 
-int x(int t) {
+
+double pattern(int t) {
+  // return 0.1; // Circle?
   return (t % 2);        // 0 or 1, triangular type pattern
   // return t % 2 ? 1 : -1; // -1 or 1
   // return (t % 3) - 1; // From -1 to 1, vertical ribon like output
   // return t % 100;
+  // int pattern[] = { 2, 8, 4, 1, 3, -3, 5, 9, 3, 1, 2, 3, 8, 7, 8, -1, 5, -1, -3, -2, 9 };
+  // return pattern[t % 21];
+}
+
+double pattern2(int t) {
+  return 5;
 }
 
 double complex couple(double complex u, double complex v, int t) {
-  // Progress to n, min 0, max 1;
-  double progress = ((double)(t - m) / (n - m));
-  double rad = progress * M_PI;
-  double scale = 0.4;
-
-  double re = creal(u) * scale + sin(rad * 2) * 0.9;
-  double im = cimag(u) * scale + cos(rad * 2) * 0.9;
+  double re = creal(u);
+  double im = cimag(u);
 
   // Squarify the output???
-  if (squarify && t % 2 == 1) {
-    re = creal(v);
+  if (squarify) {
+    if (t % 2 == 1) {
+      re = creal(v);
+    } else {
+      im = cimag(v);
+    }
+  }
+
+  // move in a circle
+  if (circlify) {
+    // Progress to n, min 0, max 1; // broken redo >:(
+    double progress = ((double)(t) / 1000);
+    double rad = progress * M_PI;
+    re += sin(rad * 2) * 2;
+    im += cos(rad * 2) * 2;
   }
   
   return (re + I * im);
 }
 
-double complex *expressionAlgorithm(double r) {
+double complex *expressionAlgorithm(
+  double x(int t), 
+  int m, 
+  int n, 
+  double r, 
+  complex double h(
+    complex double u, 
+    complex double v, 
+    int t
+  )
+) {
   // I don't know how, but it works, I think...
-  int max = n - m;
-  double complex *c = malloc(max * sizeof(double complex));
+  double complex *c = malloc((n - m) * sizeof(double complex));
   double complex E = cos(2 * M_PI * r) + I * sin(2 * M_PI * r);
   double complex u = cpow(E, x(m));
   double complex v = u;
-  c[m] = v;
-  for (int t = 0; t < max; t++) {
+  c[0] = v;
+
+  for (int t = m; t < n; t++) {
     u = u * cpow(E, x(t));
-    v = couple(u, v, t);
-    c[t] = v;
+    v = h(u, v, t);
+    c[t - m] = v;
   }
+
   return c;
 }
 
@@ -63,19 +90,21 @@ void clearScreen(display *d) {
 }
 
 void render(display *d, RunData *runData) {
-  int t = runData->t;
-
   // Pretty colours
-  double colourStep = 255.0 / (n - m);
-  colour(d, getColour(colourStep * (t - m), 255.0 - (colourStep * (t - m)), 0xFF, 0xFF));
+  colour(d, rainbowTransition((double)runData->t / runData->tMax));
+
+  // Scale point
+  complex double scaledPoint = runData->c[runData->t] * runData->scale;
+  complex double scaledPrevPoint = runData->c[runData->t - 1] * runData->scale;
   
   // Render line
-  double scale = runData->scale;
+  int midWidth = getWidth(d) / 2;
+  int midHeight = getHeight(d) / 2;
   line(d, 
-    creal(runData->c[t-1]) * scale + (getWidth(d) / 2), // x0
-    -cimag(runData->c[t-1]) * scale + (getHeight(d) / 2), // y0
-    creal(runData->c[t]) * scale + (getWidth(d) / 2), // x1
-    -cimag(runData->c[t]) * scale + (getHeight(d) / 2)// y1
+    creal(scaledPoint) + midWidth, // x0
+    -cimag(scaledPoint) + midHeight, // y0
+    creal(scaledPrevPoint) + midWidth, // x1
+    -cimag(scaledPrevPoint) + midHeight // y1
   );
   show(d);
 }
@@ -84,44 +113,68 @@ bool runIterationHander(display *d, void *runData, const char c) {
   // A way to escape
   if (c == 'x') return true;
 
+  // Render line
+  render(d, runData);
+
+  // Stop rendering at max t
+  if (((RunData *)runData)->t < ((RunData *)runData)->tMax) {
+    ((RunData *)runData)->t += 1;
+  }
+
   // Clear screen & re-render
   if (c == 'r') {
     clearScreen(d);
     ((RunData *)runData)->t = 1;
   }
-  
-  // Stop rendering at max t
-  if (((RunData *)runData)->t < n - m) {
-    render(d, runData);
-    ((RunData *)runData)->t += 1;
-  } 
 
   return false;
 }
 
-int main(void) {
-  display *d = newDisplay("Algorithm system Signa in silico (AsSis)", defaultRes, defaultRes);
-
+void renderPattern(
+  display *d, 
+  double x(int t), 
+  int m, 
+  int n, 
+  double r, 
+  double complex h(
+    double complex u, 
+    double complex v, 
+    const int t
+  )
+) {
   // Initialise run data
   RunData runData;
   runData.t = 1;
-  runData.c = expressionAlgorithm(r);
+  runData.tMax = (n - m) - 1;
+  runData.c = expressionAlgorithm(x, m, n, r, h);
 
   // Find largest point for auto scaling
-  double largest = 0;
-  for (int i = m; i < n; i++) {
-    double real = fabs(creal(runData.c[i]));
-    if (largest < real) largest = real;
-    double imaginary = fabs(cimag(runData.c[i]));
-    if (largest < imaginary) largest = imaginary;
+  if (autoScale == true) {
+    double largest = 0;
+    for (int i = m; i < n; i++) {
+      double real = fabs(creal(runData.c[i]));
+      if (largest < real) largest = real;
+      double imaginary = fabs(cimag(runData.c[i]));
+      if (largest < imaginary) largest = imaginary;
+    }
+    runData.scale = (targetScale / largest) / 2;
+  } else {
+    runData.scale = defaultScale;
   }
-  runData.scale = (targetScale / largest) / 2;
 
   // Begin the render loop
   run(d, &runData, runIterationHander);
 
   // Free allocated memory
   free(runData.c);
+}
+
+int main(void) {
+  display *d = newDisplay("Algorithm system Signa in silico (AsSis)", defaultRes, defaultRes);
+
+  renderPattern(d, pattern2, 0, 1000, 334.34, couple);
+  // renderPattern(d, pattern2, 0, 1000, 334.34, couple);
+
   freeDisplay(d);
   return 0;
 }
