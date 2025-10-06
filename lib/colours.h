@@ -14,6 +14,9 @@ int transitionColours(double progress, int n, ...);
 // Transition between pink and pink
 int coolTransition(double cyan);
 
+// Transition between pink and yellow
+int peachTransition(double progress);
+
 // Transition between red, gree, and blue
 int rgbTransition(double progress);
 

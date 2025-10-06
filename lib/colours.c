@@ -50,11 +50,15 @@ int transitionColours(double progress, int n, ...) {
 }
 
 int coolTransition(double progress) {
-  return transitionColour(progress, 0xFF00FF00, 0x00FFFF00);
+  return transitionColour(progress, 0xFF00FFFF, 0x00FFFFFF);
+}
+
+int peachTransition(double progress) {
+  return transitionColour(progress, 0xFF00FF00, 0xFFFF00FF);
 }
 
 int rgbTransition(double progress) {
-  return transitionColours(progress, 3, 0xFF000000, 0x00FF0000, 0x0000FF00);
+  return transitionColours(progress, 3, 0xFF0000FF, 0x00FF00FF, 0x0000FFFF);
 }
 
 int rainbowTransition(double progress) {

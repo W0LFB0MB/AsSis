@@ -7,13 +7,15 @@ const double targetScale = 900; // Target scale for rendered content if autoScal
 const bool autoScale = true;
 
 // Fun settings, can ignore if boring
-const bool squarify = true; // Squarify???
-const bool circlify = true; // Circlify???
+const bool squarify = false; // Squarify???
+const bool circlify = false; // Circlify???
 
 
 double pattern(int t) {
+  return t % 2 == 1 ? 3 : 1.3;
+  // return 2.7;
   // return 0.1; // Circle?
-  return (t % 2);        // 0 or 1, triangular type pattern
+  // return (t % 2);        // 0 or 1, triangular type pattern
   // return t % 2 ? 1 : -1; // -1 or 1
   // return (t % 3) - 1; // From -1 to 1, vertical ribon like output
   // return t % 100;
@@ -42,7 +44,7 @@ double complex couple(double complex u, double complex v, int t) {
     }
   }
   
-  return (re + I * im);
+  return (re + I * im) * (1.0 - ((double)t / 1000));
 }
 
 double complex *expressionAlgorithm(
@@ -76,18 +78,15 @@ int getColour(int r, int g, int b, int a) {
   return a | (b << 8) | (g << 16) | (r << 24);
 }
 
-const int white = 0xFFFFFFFF;
-const int black = 0x00000000;
-
 void clearScreen(display *d) {
-  colour(d, black);
+  colour(d, 0x000000FF);
   block(d, 0, 0, getWidth(d), getHeight(d));
-  colour(d, white);
+  colour(d, 0xFFFFFFFF);
 }
 
 void render(display *d, RunData *runData) {
   // Pretty colours
-  colour(d, coolTransition((double)runData->t / runData->tMax));
+  colour(d, peachTransition((double)runData->t / runData->tMax));
 
   // Scale point
   complex double scaledPoint = runData->c[runData->t] * runData->scale;

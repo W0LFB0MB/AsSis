@@ -28,7 +28,7 @@ static void *safeP(void *p) { if (p == NULL) fail(); return p; }
 
 void show(display *d) {
   SDL_RenderPresent(d->renderer);
-  SDL_Delay(1);
+  // SDL_Delay(1);
 }
 
 int getWidth(display *d) {
@@ -58,6 +58,7 @@ void colour(display *d, int rgba) {
   Uint8 b = (rgba >> 8) & 0xFF;
   Uint8 a = rgba & 0xFF;
   safeI(SDL_SetRenderDrawColor(d->renderer, r, g, b, a));
+  safeI(SDL_SetRenderDrawBlendMode(d->renderer, SDL_BLENDMODE_NONE));
 }
 
 display *newDisplay(char *title, int width, int height) {
