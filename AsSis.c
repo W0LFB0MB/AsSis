@@ -6,7 +6,8 @@ const double defaultScale = 100;
 const double targetScale = 900; // Target scale for rendered content if autoScale = tue
 const bool autoScale = true;
 
-const bool squarify = false; // Squarify???
+// Fun settings, can ignore if boring
+const bool squarify = true; // Squarify???
 const bool circlify = true; // Circlify???
 
 
@@ -20,30 +21,25 @@ double pattern(int t) {
   // return pattern[t % 21];
 }
 
-double pattern2(int t) {
-  return 5;
-}
-
 double complex couple(double complex u, double complex v, int t) {
   double re = creal(u);
   double im = cimag(u);
 
-  // Squarify the output???
-  if (squarify) {
+  // Move around in a circle
+  if (circlify) {
+    double progress = ((double)(t) / 1000);
+    double rad = progress * M_PI;
+    re += sin(rad * 2) * 2;
+    im += cos(rad * 2) * 2;
+  }
+
+  // Make all lines either horizontal or vertical
+  if (squarify && t != 0) {
     if (t % 2 == 1) {
       re = creal(v);
     } else {
       im = cimag(v);
     }
-  }
-
-  // move in a circle
-  if (circlify) {
-    // Progress to n, min 0, max 1; // broken redo >:(
-    double progress = ((double)(t) / 1000);
-    double rad = progress * M_PI;
-    re += sin(rad * 2) * 2;
-    im += cos(rad * 2) * 2;
   }
   
   return (re + I * im);
@@ -91,7 +87,7 @@ void clearScreen(display *d) {
 
 void render(display *d, RunData *runData) {
   // Pretty colours
-  colour(d, rainbowTransition((double)runData->t / runData->tMax));
+  colour(d, coolTransition((double)runData->t / runData->tMax));
 
   // Scale point
   complex double scaledPoint = runData->c[runData->t] * runData->scale;
@@ -172,8 +168,7 @@ void renderPattern(
 int main(void) {
   display *d = newDisplay("Algorithm system Signa in silico (AsSis)", defaultRes, defaultRes);
 
-  renderPattern(d, pattern2, 0, 1000, 334.34, couple);
-  // renderPattern(d, pattern2, 0, 1000, 334.34, couple);
+  renderPattern(d, pattern, 0, 1000, 334.34, couple);
 
   freeDisplay(d);
   return 0;
