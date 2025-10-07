@@ -32,12 +32,13 @@ int transitionColour(double progress, int from, int to) {
   return finalR | (finalG << 8) | (finalB << 16) | (finalA << 24);
 }
 
-int transitionColoursArray(double progress, int n, int points[n]) {
+int transitionColoursArray(int t, int tMax, int n, int points[n]) {
+  double progress = ((double)t / tMax);
   int i = progress * (n - 1);
   return transitionColour(fmod(progress * (n - 1), 1), points[i], points[i + 1]);
 }
 
-int transitionColours(double progress, int n, ...) {
+int transitionColours(int t, int tMax, int n, ...) {
   va_list args;
   va_start(args, n); 
   int colours[n];
@@ -46,21 +47,29 @@ int transitionColours(double progress, int n, ...) {
   };
   va_end(args);
 
-  return transitionColoursArray(progress, n, colours);
+  return transitionColoursArray(t, tMax, n, colours);
 }
 
-int coolTransition(double progress) {
-  return transitionColour(progress, 0xFF00FFFF, 0x00FFFFFF);
+int coolTransition(int t, int tMax) {
+  return transitionColour(((double)t / tMax), 0xFF00FFFF, 0x00FFFFFF);
 }
 
-int peachTransition(double progress) {
-  return transitionColour(progress, 0xFF00FFFF, 0xFFFF00FF);
+int peachTransition(int t, int tMax) {
+  return transitionColour(((double)t / tMax), 0xFF00FFFF, 0xFFFF00FF);
 }
 
-int rgbTransition(double progress) {
-  return transitionColours(progress, 3, 0xFF0000FF, 0x00FF00FF, 0x0000FFFF);
+int coolPeachTransition(int t, int tMax) {
+  if (t % 2) {
+    return coolTransition(t, tMax);
+  } else {
+    return peachTransition(t, tMax);
+  }
 }
 
-int rainbowTransition(double progress) {
-  return transitionColours(progress, 7, 0xFF0000FF, 0xFF7F00FF, 0xFFFF00FF, 0x00FF00FF, 0x0000FFFF, 0x4B00FFFF, 0x8B00FFFF);
+int rgbTransition(int t, int tMax) {
+  return transitionColours(t, tMax, 3, 0xFF0000FF, 0x00FF00FF, 0x0000FFFF);
+}
+
+int rainbowTransition(int t, int tMax) {
+  return transitionColours(t, tMax, 7, 0xFF0000FF, 0xFF7F00FF, 0xFFFF00FF, 0x00FF00FF, 0x0000FFFF, 0x4B00FFFF, 0x8B00FFFF);
 }

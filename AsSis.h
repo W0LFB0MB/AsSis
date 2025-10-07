@@ -36,7 +36,10 @@ void clearScreen(display *d);
 void render(display *d, RunData *runData);
 
 // Handle keypress & render loop iterations
-bool runIterationHander(display *d, void *runData, const char c);
+bool runIterationHander(display *d, RunData *runData, const char c);
+
+// Wrapper for runIterationHandler, casts runData from void* to RunData* for simplicity
+bool runIterationWrapper(display *d, void *runData, const char c);
 
 // Render a pattern
 void renderPattern(

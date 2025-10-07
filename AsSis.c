@@ -7,16 +7,11 @@ const double targetScale = 900; // Target scale for rendered content if autoScal
 const bool autoScale = true;
 
 double complex *expressionAlgorithm(
-  double x(int t), 
+  SequenceGenerator x, 
   int m, 
   int n, 
   double r, 
-  complex double h(
-    complex double u, 
-    complex double v, 
-    int t
-  )
-
+  CouplingFunction h
 ) {
   // I don't know how, but it works, I think...
   double complex *c = malloc((n - m) * sizeof(double complex));
@@ -27,7 +22,7 @@ double complex *expressionAlgorithm(
 
   for (int t = m; t < n; t++) {
     u = u * cpow(E, x(t));
-    v = h(u, v, t);
+    v = h(u, v, t, n - m);
     c[t - m] = v;
   }
 
@@ -42,7 +37,7 @@ void clearScreen(display *d) {
 
 void render(display *d, RunData *runData) {
   // Pretty colours
-  colour(d, runData->colourTransition((double)runData->t / runData->tMax));
+  colour(d, runData->colourTransition(runData->t, runData->tMax));
 
   // Scale point
   complex double scaledPoint = runData->c[runData->t] * runData->scale;
@@ -60,7 +55,7 @@ void render(display *d, RunData *runData) {
   show(d);
 }
 
-bool runIterationHander(display *d, void *runData, const char c) {
+bool runIterationHander(display *d, RunData *runData, const char c) {
   // A way to escape
   if (c == 'x') return true;
 
@@ -68,17 +63,21 @@ bool runIterationHander(display *d, void *runData, const char c) {
   render(d, runData);
 
   // Stop rendering at max t
-  if (((RunData *)runData)->t < ((RunData *)runData)->tMax) {
-    ((RunData *)runData)->t += 1;
+  if (runData->t < runData->tMax) {
+    runData->t += 1;
   }
 
   // Clear screen & re-render
   if (c == 'r') {
     clearScreen(d);
-    ((RunData *)runData)->t = 1;
+    runData->t = 1;
   }
 
   return false;
+}
+
+bool runIterationWrapper(display *d, void *runData, const char c) {
+  return runIterationHander(d, (RunData *)runData, c);
 }
 
 void renderPattern(
@@ -112,7 +111,7 @@ void renderPattern(
   }
 
   // Begin the render loop
-  run(d, &runData, runIterationHander);
+  run(d, &runData, runIterationWrapper);
 
   // Free allocated memory
   free(runData.c);
@@ -141,6 +140,7 @@ int main(const int argn, char *args[argn]) {
     printf("   -> 1 pink to yellow\n");
     printf("   -> 2 rgb\n");
     printf("   -> 3 rainbow\n");
+    printf("   -> 4 Alternates between 0 and 1\n");
     return 0;
   }
 
@@ -198,6 +198,7 @@ int main(const int argn, char *args[argn]) {
     case 1: ct = peachTransition; break;
     case 2: ct = rgbTransition; break;
     case 3: ct = rainbowTransition; break;
+    case 4: ct = coolPeachTransition; break;
     default: ct = coolTransition;
   }
 

@@ -13,3 +13,4 @@ Dodecahedron ./AsSis -2 -r 0.1
 Spiky ball: ./AsSis -s 0 -r 0.33333
 Flower: ./AsSis -s 0 -r 0.34 -t 1
 Bracelet: ./AsSis -s 2 -r 0.34 -c 5
+Swirly hexagon: ./AsSis -t 4 -s 1 -r 0.167 -n 2000
