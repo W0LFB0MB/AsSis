@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+typedef int (*ColourTransition)(double progress);
+
 // Transition from one colour to another
 int transitionColour(double progress, int from, int to);
 
@@ -12,7 +14,7 @@ int transitionColoursArray(double progress, int n, int *colours);
 int transitionColours(double progress, int n, ...);
 
 // Transition between pink and pink
-int coolTransition(double cyan);
+int coolTransition(double progress);
 
 // Transition between pink and yellow
 int peachTransition(double progress);

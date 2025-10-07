@@ -54,7 +54,7 @@ int coolTransition(double progress) {
 }
 
 int peachTransition(double progress) {
-  return transitionColour(progress, 0xFF00FF00, 0xFFFF00FF);
+  return transitionColour(progress, 0xFF00FFFF, 0xFFFF00FF);
 }
 
 int rgbTransition(double progress) {

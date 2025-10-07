@@ -2,8 +2,11 @@
 #define _USE_MATH_DEFINES 
 #include <math.h>
 #include <unistd.h>
+#include <string.h>
 #include "lib/display.h"
 #include "lib/colours.h"
+#include "lib/coupling.h"
+#include "lib/sequence.h"
 
 #ifndef M_PI
 #   define M_PI 3.14159265358979323846
@@ -14,6 +17,7 @@ typedef struct RunData {
   int tMax;
   double complex *c;
   double scale;
+  ColourTransition colourTransition;
 } RunData;
 
 // Pattern / series generator
@@ -24,15 +28,11 @@ double complex couple(double complex u, double complex v, const int t);
 
 // Generate sequence of points on the complex plane
 double complex *expressionAlgorithm(
-  double x(int t), 
+  SequenceGenerator x, 
   int m, 
   int n, 
   double r, 
-  double complex h(
-    double complex u, 
-    double complex v, 
-    int t
-  )
+  CouplingFunction h
 );
 
 // Return colour string from individual components
@@ -50,13 +50,10 @@ bool runIterationHander(display *d, void *runData, const char c);
 // Render a pattern
 void renderPattern(
   display *d, 
-  double x(int t), 
+  SequenceGenerator x, 
   int m, 
   int n, 
   double r, 
-  double complex h(
-    double complex u, 
-    double complex v, 
-    const int t
-  )
+  CouplingFunction h,
+  ColourTransition ct
 );
