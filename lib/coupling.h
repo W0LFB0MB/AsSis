@@ -22,3 +22,9 @@ double complex circleCouple(double complex u, double complex v, int t);
 
 // Moves the output in a circle while shrinking
 double complex shrinkingCircleCouple(double complex u, double complex v, int t);
+
+// Moves the output in a circle, then forces lines to either be verticl or horrizontal
+double complex squareCircleCouple(double complex u, double complex v, int t);
+
+// Forces lines to either be verticl or horrizontal, then moves the output in a circle
+double complex circleSquareCouple(double complex u, double complex v, int t);

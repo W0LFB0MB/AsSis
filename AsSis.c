@@ -130,6 +130,8 @@ int main(const int argn, char *args[argn]) {
     printf("   -> 2 shrinking square\n");
     printf("   -> 3 circle\n");
     printf("   -> 4 shrinking circle\n");
+    printf("   -> 5 square circle\n");
+    printf("   -> 6 circle square\n");
     printf("-s == Sequence generator\n");
     printf("   -> 0 pattern??\n");
     printf("   -> 1 constant\n");
@@ -171,6 +173,8 @@ int main(const int argn, char *args[argn]) {
     case 2: cf = shrinkingSquareCouple; break;
     case 3: cf = circleCouple; break;
     case 4: cf = shrinkingCircleCouple; break;
+    case 5: cf = squareCircleCouple; break;
+    case 6: cf = circleSquareCouple; break;
     default: cf = shrinkingCouple;
   }
 

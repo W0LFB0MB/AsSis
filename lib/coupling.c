@@ -45,3 +45,15 @@ double complex shrinkingCircleCouple(double complex u, double complex v, int t) 
     u = shrinkingCouple(u, v, t);
     return u;
 }
+
+double complex squareCircleCouple(double complex u, double complex v, int t) {
+    u = circleCouple(u, v, t);
+    u = squareCouple(u, v, t);
+    return u;
+}
+
+double complex circleSquareCouple(double complex u, double complex v, int t) {
+    u = squareCouple(u, v, t);
+    u = circleCouple(u, v, t);
+    return u;
+}
