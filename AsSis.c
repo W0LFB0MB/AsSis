@@ -121,10 +121,10 @@ void renderPattern(
 int main(const int argn, char *args[argn]) {
   if (argn == 2 && args[1][0] == '-' && args[1][1] == '?') {
     printf("Usage: %s -r [Double] -m [Int] -n [Int] -c [Int] -s [Int] -t [Int]\n", args[0]);
-    printf("-r == Scaling\n");
-    printf("-m == Start time\n");
-    printf("-n == End time\n");
-    printf("-c == Coupling function\n");
+    printf("-r = Scaling\n");
+    printf("-m = Start time\n");
+    printf("-n = End time\n");
+    printf("-c = Coupling function\n");
     printf("   -> 0 shrinking\n");
     printf("   -> 1 square\n");
     printf("   -> 2 shrinking square\n");
@@ -132,11 +132,11 @@ int main(const int argn, char *args[argn]) {
     printf("   -> 4 shrinking circle\n");
     printf("   -> 5 square circle\n");
     printf("   -> 6 circle square\n");
-    printf("-s == Sequence generator\n");
+    printf("-s = Sequence generator\n");
     printf("   -> 0 pattern??\n");
     printf("   -> 1 constant\n");
     printf("   -> 2 binary\n");
-    printf("-t == Colour transition\n");
+    printf("-t = Colour transition\n");
     printf("   -> 0 pink to purple\n");
     printf("   -> 1 pink to yellow\n");
     printf("   -> 2 rgb\n");
