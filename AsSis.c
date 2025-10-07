@@ -100,7 +100,7 @@ void renderPattern(
   // Find largest point for auto scaling
   if (autoScale == true) {
     double largest = 0;
-    for (int i = m; i < n; i++) {
+    for (int i = 0; i < n - m; i++) {
       double real = fabs(creal(runData.c[i]));
       if (largest < real) largest = real;
       double imaginary = fabs(cimag(runData.c[i]));
@@ -162,6 +162,12 @@ int main(const int argn, char *args[argn]) {
       case 't': t = atoi(args[i + 1]); break;
       default: printf("Invalid flag\n");
     }
+  }
+
+  // Assert n > m
+  if (n < m) {
+    printf("n may not be less than m.\n");
+    return 1;
   }
 
   display *d = newDisplay("Algorithm system Signa in silico (AsSis)", defaultRes, defaultRes);
