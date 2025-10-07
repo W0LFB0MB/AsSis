@@ -131,9 +131,9 @@ int main(const int argn, char *args[argn]) {
     printf("   -> 3 circle\n");
     printf("   -> 4 shrinking circle\n");
     printf("-s == Sequence generator\n");
-    printf("   -> 0 constant\n");
-    printf("   -> 1 binary\n");
-    printf("   -> 2 pattern??\n");
+    printf("   -> 0 pattern??\n");
+    printf("   -> 1 constant\n");
+    printf("   -> 2 binary\n");
     printf("-t == Colour transition\n");
     printf("   -> 0 pink to purple\n");
     printf("   -> 1 pink to yellow\n");
